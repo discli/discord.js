@@ -132,15 +132,11 @@ class WebSocketManager extends EventEmitter {
    */
   async connect() {
     const invalidToken = new DiscordjsError(ErrorCodes.TokenInvalid);
-    const {
-      url: gatewayURL,
-      shards: recommendedShards,
-      session_start_limit: sessionStartLimit,
-    } = await this.client.rest.get(Routes.gatewayBot()).catch(error => {
+    const { url: gatewayURL } = await this.client.rest.get(Routes.gateway(), { auth: false }).catch(error => {
       throw error.status === 401 ? invalidToken : error;
     });
 
-    const { total, remaining } = sessionStartLimit;
+    const recommendedShards = 1, total = 1, remaining = 1;
 
     this.debug(`Fetched Gateway Information
     URL: ${gatewayURL}

@@ -25,7 +25,6 @@ const Webhook = require('../structures/Webhook');
 const Widget = require('../structures/Widget');
 const DataResolver = require('../util/DataResolver');
 const Events = require('../util/Events');
-const IntentsBitField = require('../util/IntentsBitField');
 const Options = require('../util/Options');
 const PermissionsBitField = require('../util/PermissionsBitField');
 const Status = require('../util/Status');
@@ -157,12 +156,6 @@ class Client extends BaseClient {
      * @type {?ClientUser}
      */
     this.user = null;
-
-    /**
-     * The application of this bot
-     * @type {?ClientApplication}
-     */
-    this.application = null;
 
     /**
      * Timestamp of the time the client was last {@link Status.Ready} at
@@ -476,11 +469,6 @@ class Client extends BaseClient {
    * @private
    */
   _validateOptions(options = this.options) {
-    if (typeof options.intents === 'undefined') {
-      throw new DiscordjsTypeError(ErrorCodes.ClientMissingIntents);
-    } else {
-      options.intents = new IntentsBitField(options.intents).freeze();
-    }
     if (typeof options.shardCount !== 'number' || isNaN(options.shardCount) || options.shardCount < 1) {
       throw new DiscordjsTypeError(ErrorCodes.ClientInvalidOption, 'shardCount', 'a number greater than or equal to 1');
     }

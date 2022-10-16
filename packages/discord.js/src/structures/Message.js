@@ -12,7 +12,6 @@ const {
 } = require('discord-api-types/v10');
 const Attachment = require('./Attachment');
 const Base = require('./Base');
-const ClientApplication = require('./ClientApplication');
 const Embed = require('./Embed');
 const InteractionCollector = require('./InteractionCollector');
 const Mentions = require('./MessageMentions');
@@ -256,16 +255,6 @@ class Message extends Base {
       this.webhookId = data.webhook_id;
     } else {
       this.webhookId ??= null;
-    }
-
-    if ('application' in data) {
-      /**
-       * Supplemental application information for group activities
-       * @type {?ClientApplication}
-       */
-      this.groupActivityApplication = new ClientApplication(this.client, data.application);
-    } else {
-      this.groupActivityApplication ??= null;
     }
 
     if ('application_id' in data) {
@@ -936,7 +925,6 @@ class Message extends Base {
     return super.toJSON({
       channel: 'channelId',
       author: 'authorId',
-      groupActivityApplication: 'groupActivityApplicationId',
       guild: 'guildId',
       cleanContent: true,
       member: false,

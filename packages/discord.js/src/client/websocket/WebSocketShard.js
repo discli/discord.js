@@ -2,7 +2,7 @@
 
 const EventEmitter = require('node:events');
 const { setTimeout, setInterval, clearTimeout, clearInterval } = require('node:timers');
-const { GatewayDispatchEvents, GatewayIntentBits, GatewayOpcodes } = require('discord-api-types/v10');
+const { GatewayDispatchEvents, GatewayOpcodes } = require('discord-api-types/v10');
 const WebSocket = require('../../WebSocket');
 const Events = require('../../util/Events');
 const Status = require('../../util/Status');
@@ -511,7 +511,7 @@ class WebSocketShard extends EventEmitter {
       this.emit(WebSocketShardEvents.AllReady);
       return;
     }
-    const hasGuildsIntent = this.manager.client.options.intents.has(GatewayIntentBits.Guilds);
+
     // Step 2. Create a timeout that will mark the shard as ready if there are still unavailable guilds
     // * The timeout is 15 seconds by default
     // * This can be optionally changed in the client options via the `waitGuildTimeout` option
@@ -522,8 +522,8 @@ class WebSocketShard extends EventEmitter {
     this.readyTimeout = setTimeout(
       () => {
         this.debug(
-          `Shard ${hasGuildsIntent ? 'did' : 'will'} not receive any more guild packets` +
-            `${hasGuildsIntent ? ` in ${waitGuildTimeout} ms` : ''}.\nUnavailable guild count: ${
+          `Shard did not receive any more guild packets` +
+            ` in ${waitGuildTimeout} ms .\nUnavailable guild count: ${
               this.expectedGuilds.size
             }`,
         );
@@ -534,7 +534,7 @@ class WebSocketShard extends EventEmitter {
 
         this.emit(WebSocketShardEvents.AllReady, this.expectedGuilds);
       },
-      hasGuildsIntent ? waitGuildTimeout : 0,
+      waitGuildTimeout,
     ).unref();
   }
 
@@ -686,12 +686,10 @@ class WebSocketShard extends EventEmitter {
     // Clone the identify payload and assign the token and shard info
     const d = {
       ...client.options.ws,
-      intents: client.options.intents.bitfield,
       token: client.token,
-      shard: [this.id, Number(client.options.shardCount)],
     };
 
-    this.debug(`[IDENTIFY] Shard ${this.id}/${client.options.shardCount} with intents: ${d.intents}`);
+    this.debug(`[IDENTIFY] Shard ${this.id}/${client.options.shardCount}`);
     this.send({ op: GatewayOpcodes.Identify, d }, true);
   }
 

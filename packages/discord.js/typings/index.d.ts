@@ -767,7 +767,6 @@ export class Client<Ready extends boolean = boolean> extends BaseClient {
   private _eval(script: string): unknown;
   private _validateOptions(options: ClientOptions): void;
 
-  public application: If<Ready, ClientApplication>;
   public channels: ChannelManager;
   public get emojis(): BaseGuildEmojiManager;
   public guilds: GuildManager;
@@ -819,22 +818,6 @@ export class Client<Ready extends boolean = boolean> extends BaseClient {
 
   public removeAllListeners<K extends keyof ClientEvents>(event?: K): this;
   public removeAllListeners<S extends string | symbol>(event?: Exclude<S, keyof ClientEvents>): this;
-}
-
-export class ClientApplication extends Application {
-  private constructor(client: Client<true>, data: RawClientApplicationData);
-  public botPublic: boolean | null;
-  public botRequireCodeGrant: boolean | null;
-  public commands: ApplicationCommandManager;
-  public cover: string | null;
-  public flags: Readonly<ApplicationFlagsBitField>;
-  public tags: string[];
-  public installParams: ClientApplicationInstallParams | null;
-  public customInstallURL: string | null;
-  public owner: User | Team | null;
-  public get partial(): boolean;
-  public rpcOrigins: string[];
-  public fetch(): Promise<ClientApplication>;
 }
 
 export class ClientPresence extends Presence {
@@ -1705,7 +1688,6 @@ export class Message<InGuild extends boolean = boolean> extends Base {
   public get editedAt(): Date | null;
   public editedTimestamp: number | null;
   public embeds: Embed[];
-  public groupActivityApplication: ClientApplication | null;
   public guildId: If<InGuild, Snowflake>;
   public get guild(): If<InGuild, Guild>;
   public get hasThread(): boolean;
@@ -4398,7 +4380,6 @@ export interface ClientOptions {
   partials?: Partials[];
   failIfNotExists?: boolean;
   presence?: PresenceData;
-  intents: BitFieldResolvable<GatewayIntentsString, number>;
   waitGuildTimeout?: number;
   sweepers?: SweeperOptions;
   ws?: WebSocketOptions;
